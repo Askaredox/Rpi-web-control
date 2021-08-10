@@ -1,6 +1,6 @@
-# Rpi-web-control backend
+# Rpi web controller
 
-## Commands
+## backend
 
 ### Create
 
@@ -113,3 +113,10 @@ output:
 }
 ```
 ---
+
+## frontend
+
+
+
+
+## rpi
