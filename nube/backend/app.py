@@ -112,5 +112,5 @@ def get_page(page:str):
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, threaded=True)
-    socketio.run(app)
+    socketio.run(app, debug=True)
 

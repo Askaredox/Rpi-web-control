@@ -22,8 +22,8 @@ class Worker(QObject):
             state = resp['state']
             print(f'{state} received with {data}')
             if(state == 'create-room'):
-                self.room_name = resp['name']
-                self.room.emit(resp['name'])
+                self.room_name = resp['room']
+                self.room.emit(resp['room'])
             elif(state == 'close-room'):
                 pass
             elif(state == 'joined-room'):
@@ -36,7 +36,7 @@ class Worker(QObject):
             # await sio.emit('response', {'response': 'my response'})
 
     def sio_connect(self):
-        self.sio.connect('http://192.168.1.5:5000/')
+        self.sio.connect('http://ec2-34-242-65-242.eu-west-1.compute.amazonaws.com:5000/')
         asyncio.run(self.get_push())
         self.sio.wait()
 
