@@ -14,32 +14,83 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+var socket
 
 function App() {
   
-  var socket = socketIOClient(ENDPOINT);
+  useEffect(()=> {
+
+  var sid = -1
+   socket = socketIOClient(ENDPOINT);
   socket.on("message", (data) => {
 
-    data = JSON.parse(data.replace(/'/g, '"'))
-    console.log(data)
-    if(data.state === 'room-non-existent'){
-      alert('Room not found!')
-    }else if (data.state === 'joined-room'){
-      alert('Connected to Room: ' + data.room)
-    }
+      data = JSON.parse(data.replace(/'/g, '"'))
+      // console.log(data)
 
-  })
+
+      if(data.state === 'room-non-existent'){
+        alert('Room not found!')
+        // setIsDisabled("false")
+      }else if (data.state === 'joined-room'){
+        alert('Connected to Room: ' + data.room)
+        sid = data.sid
+        setIsDisabled("true")
+      }else if (data.state === 'leaved-room'){
+        console.log(data)
+        if(data.sid === sid){
+          setIsDisabled('')
+          sid = -1
+        }
+      }else if (data.state === 'close-room'){
+
+          setIsDisabled('')   
+          sid = -1   
+          alert('this room has been closed!')
+      }else if (data.num === "0"){
+        setBlack()
+        setFirstB('#0004ff')
+      }else if (data.num === "1"){
+        setBlack()
+        setSecondB('#ff9400')
+      }else if (data.num === "2"){
+        setBlack()
+        setThirdB('#ff00b4')
+      }else if (data.num === "3"){
+        setBlack()
+        setFourthB('#ff0000')
+      }
+
+    })
+    return () => {
+      socket.emit('leave', { 'room': code })
+    }
+  }, []) 
+ 
 
 
   const classes = useStyles();
+ 
 
   const [code, setCode] = useState('');
+  const [isDisabled, setIsDisabled] = useState('');
 
+  const [firstB,  setFirstB] = useState('#000157');   // #0004ff
+  const [secondB, setSecondB] = useState('#6b3e00');  // #ff9400
+  const [thirdB,  setThirdB] = useState('#3d002b');   // #ff00b4
+  const [fourthB, setFourthB] = useState('#3d0200');  // #ff0000
+
+ 
+
+  function setBlack () {
+    setFirstB('#000157')
+    setSecondB('#6b3e00')
+    setThirdB('#3d002b')
+    setFourthB('#3d0200')
+  }
 
   function firstButton() {
     console.log('First Button Message')
     socket.emit("messages", { room: code, message: '0' } ); 
-  
   }
 
   function secondButton() {
@@ -59,11 +110,14 @@ function App() {
 
   function sendButton() {
     console.log('Send Button Message')
+    if(isDisabled === ''){
+      socket.emit("join", { room: code } ); 
+      // socket.emit('join', {room: ""})
+      alert('conectando ...', code.toString())
+    }else{
+      socket.emit('leave', { "room": code })
+    }
     
-    socket.emit("join", { room: code } ); 
-    // socket.emit('join', {room: ""})
-    alert('conectando ...', code.toString())
-
   }
   
 
@@ -78,8 +132,8 @@ function App() {
         </Grid>
 
         <Grid item xs={12}>
-         <TextField variant="outlined" value={code} onChange={e => setCode(e.target.value)} inputProps={{ className: classes.input }} placeholder='Code' ></TextField>
-          <Button onClick={sendButton} variant="outlined" color="primary" style={{width: "60px", height: "55px", color: "green", borderColor: "green"}}>Send</Button>
+         <TextField disabled={isDisabled} variant="outlined" value={code} onChange={e => setCode(e.target.value)} inputProps={{ className: classes.input }} placeholder='Code' ></TextField>
+          <Button onClick={sendButton} variant="outlined" color="primary" style={{width: "60px", height: "55px", color:isDisabled === ''? "green" : "red", borderColor: isDisabled === ''? "green" : "red"}}>Send</Button>
         </Grid>
 
         <Grid item xs={6}>
@@ -109,22 +163,22 @@ function App() {
 {/* states */}
 
         <Grid item xs={3} container direction="column" justify="center" alignItems="center">
-          <InputLabel style={{width: "40px", height: "40px", color: "blue", borderColor: "blue", backgroundColor: "blue"}}>
+          <InputLabel style={{width: "40px", height: "40px", color: "blue", borderColor: "blue", backgroundColor: firstB }}>
           </InputLabel>
         </Grid>
 
         <Grid item xs={3} container direction="column" justify="center" alignItems="center">
-          <InputLabel style={{width: "40px", height: "40px", color: "orange", borderColor: "orange", backgroundColor: "orange"}}>
+          <InputLabel style={{width: "40px", height: "40px", color: "orange", borderColor: "orange", backgroundColor: secondB }}>
           </InputLabel>
         </Grid>
 
         <Grid item xs={3} container direction="column" justify="center" alignItems="center">
-          <InputLabel style={{width: "40px", height: "40px", color: "magenta", borderColor: "magenta", backgroundColor: "magenta"}}>
+          <InputLabel style={{width: "40px", height: "40px", color: "magenta", borderColor: "magenta", backgroundColor: thirdB }}>
           </InputLabel>
         </Grid>
 
         <Grid item xs={3} container direction="column" justify="center" alignItems="center">
-          <InputLabel style={{width: "40px", height: "40px", color: "red", borderColor: "red", backgroundColor: "red"}}>
+          <InputLabel style={{width: "40px", height: "40px", color: "red", borderColor: "blue", backgroundColor: fourthB}}>
           </InputLabel>
         </Grid> 
 
