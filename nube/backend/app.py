@@ -9,11 +9,11 @@ socketio = SocketIO(app, cors_allowed_origins="*")
 rooms = Rooms()
 
 PAGES = [
-    'https://www.google.com/',
-    'https://www.youtube.com/',
-    'https://github.com/',
-    'https://www.fiverr.com/',
-    'https://www.notion.so/'
+    'https://sostaskillbox.it/',
+    'https://sostaskillbox.it/news/',
+    'https://sostaskillbox.it/radio/',
+    'https://sostaskillbox.it/network/',
+    'https://sostaskillbox.it/educational/'
 ]
 
 @app.route('/')
