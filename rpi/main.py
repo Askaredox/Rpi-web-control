@@ -41,7 +41,7 @@ class Window(QWidget):
         vbox.addLayout(hbox)
 
         self.webEngineView = QWebEngineView()
-        self.navigate_to_url('https://stackoverflow.com/')
+        self.navigate_to_url('https://sostaskillbox.it/')
         vbox.addWidget(self.webEngineView)
 
         self.setLayout(vbox)
