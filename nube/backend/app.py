@@ -8,13 +8,6 @@ cors = CORS(app, resources={r"/*": {"origin": "*"}})
 socketio = SocketIO(app, cors_allowed_origins="*")
 rooms = Rooms()
 
-PAGES = [
-    'https://sostaskillbox.it/',
-    'https://sostaskillbox.it/news/',
-    'https://sostaskillbox.it/radio/',
-    'https://sostaskillbox.it/network/',
-    'https://sostaskillbox.it/educational/'
-]
 
 @app.route('/')
 def hello():
@@ -94,7 +87,7 @@ def send_to_room(data):
     room = data['room']
     message = data['message']
     sid = request.sid
-    page = get_page(message)
+    page = rooms.get_url(room, message)
     print(page)
     res = {
         'state': 'message',
@@ -102,13 +95,6 @@ def send_to_room(data):
         'message': page,
     }
     send(str(res), room=room)
-
-def get_page(page:str):
-    if(page.isdigit()):
-        return PAGES[int(page)]
-    else:
-        return PAGES[4]
-
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000, threaded=True)
